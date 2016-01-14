@@ -41,7 +41,7 @@ import QuartzCore
             self.setOn(newValue, animated: false)
         }
     }
-
+    
     /*
     *	Sets the background color that shows when the switch off and actively being touched.
     *   Defaults to light gray.
@@ -133,8 +133,8 @@ import QuartzCore
     @IBInspectable public var isRounded: Bool = true {
         willSet {
             if newValue {
-                backgroundView.layer.cornerRadius = self.frame.size.height * 0.5
-                thumbView.layer.cornerRadius = (self.frame.size.height * 0.5) - 1
+                backgroundView.layer.cornerRadius = self.frame.size.height * customRadius
+                thumbView.layer.cornerRadius = (self.frame.size.height * customRadius) - 1
             }
             else {
                 backgroundView.layer.cornerRadius = 2
@@ -201,6 +201,7 @@ import QuartzCore
     private var isAnimating: Bool = false
     private var userDidSpecifyOnThumbTintColor: Bool = false
     private var switchValue: Bool = false
+    private var customRadius: CGFloat = 0.2
     
     /*
     *   Initialization
@@ -231,7 +232,7 @@ import QuartzCore
         // background
         self.backgroundView = UIView(frame: CGRectMake(0, 0, self.frame.size.width, self.frame.size.height))
         backgroundView.backgroundColor = UIColor.clearColor()
-        backgroundView.layer.cornerRadius = self.frame.size.height * 0.5
+        backgroundView.layer.cornerRadius = self.frame.size.height * customRadius
         backgroundView.layer.borderColor = self.borderColor.CGColor
         backgroundView.layer.borderWidth = 1.0
         backgroundView.userInteractionEnabled = false
@@ -265,7 +266,7 @@ import QuartzCore
         // thumb
         self.thumbView = UIView(frame: CGRectMake(1, 1, self.frame.size.height - 2, self.frame.size.height - 2))
         thumbView.backgroundColor = self.thumbTintColor
-        thumbView.layer.cornerRadius = (self.frame.size.height * 0.5) - 1
+        thumbView.layer.cornerRadius = (self.frame.size.height * customRadius) - 1
         thumbView.layer.shadowColor = self.shadowColor.CGColor
         thumbView.layer.shadowRadius = 2.0
         thumbView.layer.shadowOpacity = 0.5
@@ -280,7 +281,7 @@ import QuartzCore
         thumbImageView.contentMode = UIViewContentMode.Center
         thumbImageView.autoresizingMask = UIViewAutoresizing.FlexibleWidth
         thumbView.addSubview(thumbImageView)
-    
+        
         self.on = false
     }
     
@@ -294,16 +295,16 @@ import QuartzCore
         isAnimating = true
         
         UIView.animateWithDuration(0.3, delay: 0.0, options: [UIViewAnimationOptions.CurveEaseOut, UIViewAnimationOptions.BeginFromCurrentState], animations: {
-                if self.on {
-                    self.thumbView.frame = CGRectMake(self.bounds.size.width - (activeKnobWidth + 1), self.thumbView.frame.origin.y, activeKnobWidth, self.thumbView.frame.size.height)
-                    self.backgroundView.backgroundColor = self.onTintColor
-                    self.thumbView.backgroundColor = self.onThumbTintColor
-                }
-                else {
-                    self.thumbView.frame = CGRectMake(self.thumbView.frame.origin.x, self.thumbView.frame.origin.y, activeKnobWidth, self.thumbView.frame.size.height)
-                    self.backgroundView.backgroundColor = self.activeColor
-                    self.thumbView.backgroundColor = self.thumbTintColor
-                }
+            if self.on {
+                self.thumbView.frame = CGRectMake(self.bounds.size.width - (activeKnobWidth + 1), self.thumbView.frame.origin.y, activeKnobWidth, self.thumbView.frame.size.height)
+                self.backgroundView.backgroundColor = self.onTintColor
+                self.thumbView.backgroundColor = self.onThumbTintColor
+            }
+            else {
+                self.thumbView.frame = CGRectMake(self.thumbView.frame.origin.x, self.thumbView.frame.origin.y, activeKnobWidth, self.thumbView.frame.size.height)
+                self.backgroundView.backgroundColor = self.activeColor
+                self.thumbView.backgroundColor = self.thumbTintColor
+            }
             }, completion: { finished in
                 self.isAnimating = false
         })
@@ -331,15 +332,15 @@ import QuartzCore
                 didChangeWhileTracking = true
             }
         }
-
+        
         return true
     }
     
     override public func endTrackingWithTouch(touch: UITouch?, withEvent event: UIEvent?) {
         super.endTrackingWithTouch(touch, withEvent: event)
-
+        
         let previousValue = self.on
-
+        
         if didChangeWhileTracking {
             self.setOn(currentVisualValue, animated: true)
         }
@@ -372,7 +373,7 @@ import QuartzCore
             
             // background
             backgroundView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height)
-            backgroundView.layer.cornerRadius = self.isRounded ? frame.size.height * 0.5 : 2
+            backgroundView.layer.cornerRadius = self.isRounded ? frame.size.height * customRadius : 2
             
             // images
             onImageView.frame = CGRectMake(0, 0, frame.size.width - frame.size.height, frame.size.height)
@@ -389,7 +390,7 @@ import QuartzCore
                 thumbView.frame = CGRectMake(1, 1, normalKnobWidth, normalKnobWidth)
             }
             
-            thumbView.layer.cornerRadius = self.isRounded ? (frame.size.height * 0.5) - 1 : 2
+            thumbView.layer.cornerRadius = self.isRounded ? (frame.size.height * customRadius) - 1 : 2
         }
     }
     
@@ -440,8 +441,8 @@ import QuartzCore
                 self.offImageView.alpha = 0
                 self.onLabel.alpha = 1.0
                 self.offLabel.alpha = 0
-            }, completion: { finished in
-                self.isAnimating = false
+                }, completion: { finished in
+                    self.isAnimating = false
             })
         }
         else {
@@ -491,8 +492,8 @@ import QuartzCore
                 self.onLabel.alpha = 0
                 self.offLabel.alpha = 1.0
                 
-            }, completion: { finished in
-                self.isAnimating = false
+                }, completion: { finished in
+                    self.isAnimating = false
             })
         }
         else {
